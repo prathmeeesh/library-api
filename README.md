@@ -1,35 +1,63 @@
-# Library Management Secure API
+# Secure Library Management API
 
-A secure backend REST API built using ASP.NET Core and SQL Server.  
-Implements authentication, authorization and protected resources using JWT tokens.
+Production-style REST API built using ASP.NET Core and SQL Server demonstrating authentication, authorization and protected resources using JWT tokens.
 
-## Features
-- User registration and login
-- Password hashing (BCrypt)
-- JWT authentication
+---
+
+## Key Features
+- User Registration & Login
+- Password hashing using BCrypt
+- JWT Token authentication
 - Protected endpoints
 - Entity Framework Core database integration
+- Role-based authorization ready
+
+---
 
 ## Tech Stack
 - ASP.NET Core Web API
 - SQL Server
 - Entity Framework Core
 - JWT Authentication
+- Swagger API documentation
 
-## Architecture
-See /docs folder for diagrams.
+---
+
+## System Architecture
+See: docs/architecture.md
+
+## Database Schema
+See: docs/database.md
+
+## Authentication Flow
+See: docs/sequence.md
+
+---
 
 ## API Endpoints
-POST /api/auth/register
-POST /api/auth/login
-GET /api/books (Protected)
-POST /api/books (Protected)
 
-## How to Run
+### Auth
+POST /api/auth/register  
+POST /api/auth/login  
+
+### Books (Protected)
+GET /api/books  
+POST /api/books  
+
+---
+
+## Running the Project
+
 1. Clone repository
-2. Update connection string in appsettings.json
-3. Run `Update-Database`
+2. Update connection string in `appsettings.json`
+3. Run database migration:
+   ```
+   Update-Database
+   ```
 4. Start application
+5. Use Swagger UI for testing
 
-## Learning Outcome
-Demonstrates backend authentication design, secure API access and database modelling.
+---
+
+## Learning Outcomes
+This project demonstrates backend authentication design, secure API access and relational database modelling following real-world software engineering practices.
