@@ -1,3 +1,13 @@
+# Library API — Original Source Prototype
+
+> **Live Folio demo:** [Folio — Library Management System](https://prathmesh-library.runasp.net/) is a non-commercial **read-only portfolio demonstration** with 15 synthetic books. Visitors can browse and search; registration, login, borrowing, returns, and administration are disabled on the hosted site.
+
+> **Source status:** This branch currently contains the original API-era prototype, **not** the full ASP.NET Core 10 Folio implementation behind the live demonstration. The completed local implementation has been tested separately and awaits a reviewed GitHub source publication. Do not treat the runtime or endpoints below as documentation for the deployed demo.
+
+> **Security note:** Earlier commits contained an exposed JWT signing value. Newer source must use independently generated secrets supplied via protected configuration; historical credential retirement remains a separate operational review.
+
+---
+
 # Secure Library Management API
 
 Production-style REST API built using ASP.NET Core and SQL Server demonstrating authentication, authorization and protected resources using JWT tokens.
