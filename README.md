@@ -4,13 +4,15 @@
 
 > **Source status:** This branch currently contains the original API-era prototype, **not** the full ASP.NET Core 10 Folio implementation behind the live demonstration. The completed local implementation has been tested separately and awaits a reviewed GitHub source publication. Do not treat the runtime or endpoints below as documentation for the deployed demo.
 
-> **Security note:** Earlier commits contained an exposed JWT signing value. Newer source must use independently generated secrets supplied via protected configuration; historical credential retirement remains a separate operational review.
+> **Security note:** Commits `50fa502` and `034580f` committed a JWT signing key in `appsettings.json`. That key is treated as **compromised** and must never be used. It has been removed from the current branch, but it remains in Git history, so removing it does not make it safe again. Supply your own secrets through environment variables or other untracked configuration (see [Running the Project](#running-the-project)). The Folio application refuses to start with the historical key. See [SECURITY.md](SECURITY.md).
+
+> **Runtime status:** This prototype targets .NET 8, which reached end of support on 10 November 2026. It is kept for reference and is not maintained.
 
 ---
 
-# Secure Library Management API
+# Library Management API (original prototype)
 
-Production-style REST API built using ASP.NET Core and SQL Server demonstrating authentication, authorization and protected resources using JWT tokens.
+Learning-prototype REST API built with ASP.NET Core 8 and SQL Server, demonstrating JWT authentication and protected endpoints.
 
 ---
 
@@ -20,12 +22,12 @@ Production-style REST API built using ASP.NET Core and SQL Server demonstrating 
 - JWT Token authentication
 - Protected endpoints
 - Entity Framework Core database integration
-- Role-based authorization ready
+- Role claim included in issued JWTs (no role-restricted endpoints)
 
 ---
 
 ## Tech Stack
-- ASP.NET Core Web API
+- ASP.NET Core 8 Web API
 - SQL Server
 - Entity Framework Core
 - JWT Authentication
@@ -56,16 +58,38 @@ POST /api/books
 
 ---
 
+## Known Limitations
+- Any authenticated user can add books; there are no administrator-only endpoints.
+- `POST /api/books` binds the `Book` entity directly, so clients can set fields such as `Id` and `IsBorrowed`.
+- Token audience validation uses the issuer value.
+- Borrowing is modelled in the database but has no endpoints.
+
+The Folio implementation addresses these; its source is not yet published here.
+
+---
+
 ## Running the Project
 
-1. Clone repository
-2. Update connection string in `appsettings.json`
-3. Run database migration:
+Configuration is supplied outside source control. The application does not start without `Jwt:Key`.
+
+1. Clone the repository.
+2. Provide configuration as environment variables, or in an untracked `appsettings.Development.json` (git-ignored):
+   - `ConnectionStrings__Default`: your SQL Server connection string
+   - `Jwt__Key`: a new random key of at least 32 bytes. Never reuse the historical key.
+   - `Jwt__Issuer`: an issuer name (also used as the token audience)
+
+   PowerShell example for the session that runs the app (the key is generated and never displayed):
+   ```powershell
+   $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+   $bytes = [byte[]]::new(64); $rng.GetBytes($bytes); $rng.Dispose()
+   $env:Jwt__Key = [Convert]::ToBase64String($bytes); [Array]::Clear($bytes, 0, $bytes.Length)
+   $env:Jwt__Issuer = 'LibraryApi.Local'
+   $env:ConnectionStrings__Default = 'Server=(localdb)\MSSQLLocalDB;Database=LibraryApiLocal;Integrated Security=true;TrustServerCertificate=true'
    ```
-   Update-Database
-   ```
-4. Start application
-5. Use Swagger UI for testing
+   If you start the app from Visual Studio, use the untracked `appsettings.Development.json` instead.
+3. Apply the database migrations: `Update-Database` (Package Manager Console) or `dotnet ef database update`.
+4. Start the application with `dotnet run`.
+5. Swagger UI is available in the Development environment.
 
 ---
 
